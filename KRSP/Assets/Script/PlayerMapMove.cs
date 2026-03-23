@@ -1,19 +1,37 @@
 using UnityEngine;
 
-public class PlayerMapMove : MonoBehaviour
+public class PlayerMove : MonoBehaviour
 {
-    [Header("移动设置")]
-    [SerializeField] private float moveSpeed = 5f;
+    public float moveSpeed = 5f;
 
-    private Vector2 moveDirection;
+    private Vector2 moveInput;
+    private SpriteRenderer sr;
+
+    private void Start()
+    {
+        sr = GetComponent<SpriteRenderer>();
+    }
 
     private void Update()
     {
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
 
-        moveDirection = new Vector2(moveX, moveY).normalized;
+        moveInput = new Vector2(moveX, moveY).normalized;
 
-        transform.position += (Vector3)(moveDirection * moveSpeed * Time.deltaTime);
+        // 默认朝左
+        if (moveX > 0)
+        {
+            sr.flipX = true;   // 向右时翻转
+        }
+        else if (moveX < 0)
+        {
+            sr.flipX = false;  // 向左时恢复默认
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        transform.position += (Vector3)(moveInput * moveSpeed * Time.fixedDeltaTime);
     }
 }
