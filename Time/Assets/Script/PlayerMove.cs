@@ -2,26 +2,37 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    [Header("移动速度")]
-    public float moveSpeed = 5f;   // 可以在 Inspector 里直接改
+    public float moveSpeed = 5f;
 
     private Rigidbody2D rb;
+    private Animator animator;
     private float moveInput;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        // 获取左右输入：A/D 或 左右方向键
         moveInput = Input.GetAxisRaw("Horizontal");
+
+        // 动画切换
+        if (animator != null)
+        {
+            animator.SetBool("isMoving", moveInput != 0);
+        }
+
+        // 左右翻转
+        if (moveInput != 0)
+        {
+            transform.localScale = new Vector3(Mathf.Sign(moveInput), 1f, 1f);
+        }
     }
 
     void FixedUpdate()
     {
-        // 只控制 X 方向速度，Y 保持原本速度（比如跳跃/下落时不会被覆盖）
         rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
     }
 }
